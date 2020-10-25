@@ -1,3 +1,42 @@
+import numpy as np
+class Vector(object):
+    def __init__(self, list_1):
+        self.ownlist = list_1
+    def copyfrom(self, given_list):
+        new_list = np.array(2*len(given_list))
+        for i in range(len(given_list)):
+            new_list[i] = given_list[i] 
+    def insert(self, item1,location) :
+        self.ownlist.append([]) 
+        j = 0
+        for i in range(len(self.ownlist) -1 ,0,-1):
+            if j == location:
+                self.ownlist[j] = item1
+            else:
+               j = j +1
+               self.ownlist[i] = self.ownlist[i-1]
+    def delete(self, given_list, lo, hi):
+        for  i in range(hi - lo):
+           if hi + i <= len(given_list) - 1:
+
+            given_list[lo + i] = given_list[hi + i]
+           else:
+               given_list[lo + i ] = None
+        return given_list
+    def find(self,given_list, value):
+        for i in range(len(given_list) -1, 0, -1):
+            if given_list[i] == value:
+                 return i
+        return 'false'
+    def unify_list(self,given_list):
+      while i < len(given_list) :
+        i = 2
+        for j in range(i):
+            if given_list[j] == given_list[i]:
+             given_list  = self.delete(given_list,j, j+1)
+        i  = i + 1
+
+
 class DCA(object):
     def __init__(self,list1):
         self.list2 = list1
