@@ -22,7 +22,22 @@ class Vector(object):
             given_list[lo + i] = given_list[hi + i]
            else:
                given_list[lo + i ] = None
-        return given_list
+        answer = []
+        for i in range(len(given_list)):
+            if given_list[i] == None: 
+                break
+            answer.append(given_list[i])
+        return answer
+    def remove(self,given_list,location):
+       return  self.delete(given_list,location,location+1)
+    def none_duplicate(self,given_list):
+        i,j = 0,1
+        while (j < len(given_list)):
+            if given_list[i] != given_list[j]:
+                i = i + 1 
+                given_list[i] = given_list[j]
+            j = j + 1
+        self.delete(given_list, i + 1, j) 
     def find(self,given_list, value):
         for i in range(len(given_list) -1, 0, -1):
             if given_list[i] == value:
@@ -35,6 +50,15 @@ class Vector(object):
             if given_list[j] == given_list[i]:
              given_list  = self.delete(given_list,j, j+1)
         i  = i + 1
+    def search_version1(self,given_list,value,lo, hi):
+       while (lo < hi):
+        mi = int( (lo + hi) /2)
+        if given_list[mi] < value:
+            lo = mi + 1 
+        elif value < given_list[mi]:
+            hi = mi
+        else:
+            return mi
 
 
 class DCA(object):
@@ -106,3 +130,7 @@ if __name__ == "__main__":
     dca.recursive(list2,0,3)
     print(list2)
     print(dca.findsubsequence('educational','advantage'))
+
+    vector = Vector([1,2,3,4])
+    print(vector.remove([1,2,3],2))
+    
