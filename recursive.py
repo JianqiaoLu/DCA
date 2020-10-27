@@ -50,6 +50,7 @@ class Vector(object):
             if given_list[j] == given_list[i]:
              given_list  = self.delete(given_list,j, j+1)
         i  = i + 1
+    
     def search_version1(self,given_list,value,lo, hi):
        while (lo < hi):
         mi = int( (lo + hi) /2)
@@ -59,8 +60,56 @@ class Vector(object):
             hi = mi
         else:
             return mi
-
-
+    def search_version2(self,given_list,value,lo,hi):
+        while(lo< hi - 1 ):
+            mi = int( (lo + hi) /2)
+            if given_list[mi] < value:
+                hi  = mi
+            else:
+                lo = mi
+        if value == given_list[lo]:
+            return lo
+        else:
+            return -1
+    def search_version3(self,given_list,value,lo,hi):
+        while(lo<hi):
+            i = int( (lo + hi) /2)
+            if given_list[mi] > value:
+                hi  = mi
+            else:
+                lo = mi + 1 
+        return lo -1
+        #这个方法简直完美
+    def sort(self, given_list):
+         pass
+    def bubblesort(self,given_list):
+        for j in range(len(given_list)  , 1, -1):
+           sort_or_not = True
+           for i  in range(0, j -1):
+               if given_list[i] >= given_list[i+1]:
+                   item = given_list[i]
+                   given_list[i] = given_list[i+1]
+                   given_list[i+1] = item
+                   sort_or_not = False
+           if sort_or_not :
+                break
+        return given_list
+    def bubble(self,given_list, lo, hi):
+        lo = lo + 1
+        last = lo
+        while(lo <= hi):
+            if given_list[lo - 1] >= given_list[lo]:
+                   item = given_list[lo]
+                   given_list[lo] = given_list[lo-1]
+                   given_list[lo-1] = item
+                   last = lo
+            lo = lo +1
+        return last
+    def  imporved_bubblesort(self,given_list):
+        hi = self.bubble(given_list,0,len(given_list)-1)
+        while(1 < hi):
+            hi = self.bubble(given_list,0,hi)
+        return given_list
 class DCA(object):
     def __init__(self,list1):
         self.list2 = list1
@@ -133,4 +182,6 @@ if __name__ == "__main__":
 
     vector = Vector([1,2,3,4])
     print(vector.remove([1,2,3],2))
+    print(vector.bubblesort([3,2,1]))
+    print(vector.imporved_bubblesort([3,2,1]))
     
