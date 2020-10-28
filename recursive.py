@@ -110,6 +110,38 @@ class Vector(object):
         while(1 < hi):
             hi = self.bubble(given_list,0,hi)
         return given_list
+    def merge(self,right_list, left_list):
+        answer  = [] 
+        right_length = len(right_list)
+        left_length = len(left_list)
+        i,ji, k = 0,0,0
+        while( i < right_length + left_length ):
+
+            if(ji < right_length) and (k >= left_length ):
+                answer.append(right_list[ji])
+                i = i + 1 
+                ji = ji + 1
+            elif (ji < right_length) and (right_list[ji] <= left_list[k]):
+                answer.append(right_list[ji])
+                i = i + 1 
+                ji = ji + 1           
+            elif (k < left_length) and ( ji >= right_length ):
+                answer.append( left_list[k])
+                i = i + 1
+                k = k + 1
+            elif  (k < left_length) and (left_list[k] < right_list[ji]):
+                answer.append( left_list[k])
+                i = i + 1
+                k = k + 1                
+        return answer 
+    def mersort(self, given_list, lo, hi):
+        if hi - lo <= 1:
+         return [given_list[lo]]
+        else:
+          mi  = int(lo + hi /2)
+          left = self.mersort(given_list, lo, mi)
+          right = self.mersort(given_list,mi,hi)
+          return self.merge(right,left)
 class DCA(object):
     def __init__(self,list1):
         self.list2 = list1
@@ -171,6 +203,7 @@ class DCA(object):
            else:
                answer = dict(list(answer1.items())+list(answer2.items()))
         return answer
+
             
 
 if __name__ == "__main__":
@@ -184,4 +217,5 @@ if __name__ == "__main__":
     print(vector.remove([1,2,3],2))
     print(vector.bubblesort([3,2,1]))
     print(vector.imporved_bubblesort([3,2,1]))
+    print(vector.mersort([3,2,1],0,3))
     
