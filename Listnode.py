@@ -66,6 +66,7 @@ class Ownlist(object):
             else:
                 i =i + 1
         return min
+    
     def select_sort(self, listnode):
         first = listnode.pre
         last  = listnode
@@ -80,7 +81,7 @@ class Ownlist(object):
             max_node = self.selectmin(first, length)
             self.insertbefore(last,max_node.value)
             self.delete(max_node)     
-            length = length - 1
+            length = length - 1   
 
 
 

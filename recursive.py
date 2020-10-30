@@ -116,7 +116,6 @@ class Vector(object):
         left_length = len(left_list)
         i,ji, k = 0,0,0
         while( i < right_length + left_length ):
-
             if(ji < right_length) and (k >= left_length ):
                 answer.append(right_list[ji])
                 i = i + 1 
