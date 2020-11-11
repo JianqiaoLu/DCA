@@ -4,12 +4,24 @@ class Vertex(object):
             self.name =vertexname
             self.parent = None
 
-Vertex_list = [Vertex('0'), Vertex('1'),Vertex('2'),Vertex('3'),Vertex('4'),Vertex('5')]
+Vertex_list = [
+           Vertex('0'), 
+           Vertex('1'),
+           Vertex('2'),
+           Vertex('3'),
+           Vertex('4'),
+           Vertex('5')
+           ]
+
 class Graphic(object):
         def __init__(self):
             self.graphdict= {}
+
         def AddEdge(self, first_vertex, second_vertex, edgecapacity):
+
             self.graphdict[(first_vertex,second_vertex)] = edgecapacity
+
+
         def findmaxflow(self):
             total_value = 0
             while self.findonepath():
@@ -22,11 +34,15 @@ class Graphic(object):
                  self.updategraphdict(flow_path,flow_value)
                  total_value = total_value + flow_value
             print(total_value)
+
+
         def updategraphdict(self,flow_path,flow_value):
             while(flow_path.parent != None ):
                  self.graphdict[(flow_path.parent.name,flow_path.name)]  =  self.graphdict[(flow_path.parent.name,flow_path.name)] - flow_value
                  self.graphdict[(flow_path.name, flow_path.parent.name)] =  flow_value
                  flow_path = flow_path.parent
+
+
         def findonepath(self):
              initial_vertex = '0'
              end_vertex =  '5'
