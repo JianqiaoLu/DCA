@@ -62,6 +62,16 @@ class binnode(object):
         while (len(node_stack) != 0):
             node = node_stack.pop(0)
             node_stack =  node.travalalongleft(node_stack)
+    def middletraverse(self):
+        binnode = self
+        if not binnode:
+           return 
+        if binnode.lchild:
+         binnode.lchild.middletraverse()
+        print(binnode.value)
+        if binnode.rchild:
+         binnode.rchild.middletraverse()
+
         
         
 
@@ -82,3 +92,5 @@ if __name__ == "__main__":
     b.insertaslchild(a)
     c.insertasrchild(d)
     c.traverse_version1()
+    c.middletraverse()
+    #print(c.height)
