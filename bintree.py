@@ -83,23 +83,24 @@ class binnode(object):
          binnode = binnode_stack.pop()
          print(binnode.value)
          binnode = binnode.rchild
-        
-        
+    def uptodowntraverse(self):
+        binnode_list = [self]
+        current_list = []
+        while len(binnode_list) != 0:
+          current_list = []  
+          for binnode in binnode_list:
+            print(binnode.value)
+            if binnode.lchild:
+             current_list.append(binnode.lchild)
+            if binnode.rchild:
+             current_list.append(binnode.rchild)
+          binnode_list = current_list
     def importgoalonglchild(self, binnode_stack):
         binnode = self
         while(binnode):
             binnode_stack.push(binnode)
             binnode = binnode.lchild
         return binnode_stack
-        
-
-        
-
-
-        
-        
-
-                   
 
 def getheight(node):
     if node:
@@ -118,4 +119,6 @@ if __name__ == "__main__":
     c.traverse_version1()
     c.middletraverse()
     c.middletraverse_version2()
+    print('111')
+    c.uptodowntraverse()
     #print(c.height)
