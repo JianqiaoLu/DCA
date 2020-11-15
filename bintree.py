@@ -1,4 +1,5 @@
 import math
+from Stack import Stack
 class binnode(object):
     def __init__(self,value):
         self.value = value
@@ -71,6 +72,29 @@ class binnode(object):
         print(binnode.value)
         if binnode.rchild:
          binnode.rchild.middletraverse()
+    def middletraverse_version2(self):
+        binnode_stack = Stack([])
+        binnode = self
+        while True:
+         if binnode:
+          binnode_stack = binnode.importgoalonglchild(binnode_stack)
+         if len(binnode_stack.list) == 0:
+             break
+         binnode = binnode_stack.pop()
+         print(binnode.value)
+         binnode = binnode.rchild
+        
+        
+    def importgoalonglchild(self, binnode_stack):
+        binnode = self
+        while(binnode):
+            binnode_stack.push(binnode)
+            binnode = binnode.lchild
+        return binnode_stack
+        
+
+        
+
 
         
         
@@ -93,4 +117,5 @@ if __name__ == "__main__":
     c.insertasrchild(d)
     c.traverse_version1()
     c.middletraverse()
+    c.middletraverse_version2()
     #print(c.height)
