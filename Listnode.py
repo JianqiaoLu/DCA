@@ -93,7 +93,6 @@ class Ownlist(object):
                 p = p.pre
             else:
                 return p.next
-
         return None
     def insert_sort(self, listnode):
 
@@ -108,8 +107,30 @@ class Ownlist(object):
                  self.delete(cur)
             else:
                 cur = cur.next
-        
-        
+    
+        # insert_sort 是输入敏感的，复杂度和输入序列的有序性关系很大
+
+
+def quick_sort(original_list,start_point, end_point):
+    if (start_point + 1  < end_point):
+
+        i  = partition(original_list, start_point, end_point)
+        result1 = quick_sort(original_list, start_point, i )
+        resutl2 = quick_sort(original_list, i +1, end_point)
+    # istead of while, we shall use if since only one loop is sufficient
+def partition(original_list,start_point, end_point):
+    i, p = start_point, start_point
+    for j in range(p, end_point):
+        if original_list[j] < original_list[end_point -1]:
+            value = original_list[j]
+            original_list[j] = original_list[i]
+            original_list[i] = value
+            i = i + 1 
+    value = original_list[j]
+
+    original_list[j] = original_list[i]
+    original_list[i] = value
+    return i 
 
 
 
@@ -125,6 +146,10 @@ def copynodes(listnode, n_numbers):
        else:
            return ownlist
 if __name__ == "__main__":
+    original_list = [15, 9,10,5,7 ,11,13]
+    print(quick_sort(original_list, 0, len(original_list)))
+    print(original_list)
+    '''
     ownlist = Ownlist()
     ownlist1 = Ownlist()
     ownlist.insertbefore(None,1)
@@ -146,3 +171,4 @@ if __name__ == "__main__":
     ownlist1.printallnodes(ownlist1.header.next)
     ownlist1.insert_sort(ownlist1.header.next)
     ownlist1.printallnodes(ownlist1.header.next)
+    '''
