@@ -1,5 +1,6 @@
 import math
 from Stack import Stack
+
 class binnode(object):
     def __init__(self,value):
         self.value = value
@@ -13,7 +14,7 @@ class binnode(object):
             tree_size = tree_size +  self.lchild.size()
         if self.rchild :
             tree_size = tree_size  + self.rchild.size()
-        return tree_size
+        return tree_size 
         # interesting
     def insertaslchild(self, binnode_e):
 
@@ -101,6 +102,41 @@ class binnode(object):
             binnode_stack.push(binnode)
             binnode = binnode.lchild
         return binnode_stack
+class binst(binnode):
+    def search(self, nodevalue):
+      current_node = self
+      previous_node = self
+      while(current_node): 
+        if nodevalue == current_node.value:
+           return current_node
+        elif nodevalue< current_node.value:
+            previous_node = current_node
+            current_node = current_node.lchild
+        else:
+            previous_node = current_node
+            current_node = current_node.rchild
+      if current_node:
+          return (False, previous_node)
+      else:
+          return (True, current_node)
+          
+    def insert(self, binst):
+        location = self.search(binst.value)
+        if location(0):
+            return "there already exists one same value"
+        else:
+            insert_location =  location(1)
+            if insert_location.value< binst.value:
+                insert_location.rchild = binst
+                binst.parent = insert_location
+            else:
+                insert_location.lchild = binst
+                binst.parent = insert_location
+
+        
+        
+    def remove(self, binnode):
+        pass
 
 def getheight(node):
     if node:
