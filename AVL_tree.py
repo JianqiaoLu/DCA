@@ -1,12 +1,13 @@
 from bintree import binnode
 
-class Binst(object):
+class Binst(binnode):
+
     def search(self, nodevalue):
       current_node = self
       previous_node = self
       while(current_node): 
         if nodevalue == current_node.value:
-           return current_node
+            break
         elif nodevalue< current_node.value:
             previous_node = current_node
             current_node = current_node.lchild
@@ -14,26 +15,29 @@ class Binst(object):
             previous_node = current_node
             current_node = current_node.rchild
       if current_node:
-          return (False, previous_node)
-      else:
           return (True, current_node)
+      else:
+          return (False, previous_node)
           
     def insert(self, value):
         binst = Binst(value)
         location = self.search(binst.value)
-        if location(0):
+        if location[0]:
             return "there already exists one same value"
         else:
-            insert_location =  location(1)
+            insert_location =  location[1]
+            
             if insert_location.value< binst.value:
                 insert_location.rchild = binst
                 binst.parent = insert_location
             else:
                 insert_location.lchild = binst
                 binst.parent = insert_location
+            insert_location.updateheightabove()
+        
 
     def change_parent(self, old_binnode, new_binnode ):
-        if old_binnode.parent
+        if old_binnode.parent:
          if new_binnode:
            new_binnode.parent = old_binnode.parent
          if old_binnode.parent.value > old_binnode.value:
@@ -48,11 +52,10 @@ class Binst(object):
         while(current_node):
             current_node = current_node.lchild
 
-    def remove(self, binnode):
-        location = binnode.value
-        result  =  self.search(binnode)
-        if  result(0):
-            deleted_node = result(1)
+    def remove(self, binnode_value):
+        result  =  self.search(binnode_value)
+        if  result[0]:
+            deleted_node = result[1]
             if  not (deleted_node.rchild):
                 self.change_parent(deleted_node, deleted_node.lchild)
             elif not (deleted_node.lchild):
@@ -70,3 +73,10 @@ class Binst(object):
             new_node = self.find_leftmostchild(deleted_node.rchild)
             
             return 'there exist no node to be deleted'
+if __name__ == "__main__":
+    binnode = Binst(3) 
+    binnode.middletraverse()
+    print(binnode.insert(2))
+    binnode.middletraverse()
+    binnode.remove(2)
+    binnode.middletraverse()
