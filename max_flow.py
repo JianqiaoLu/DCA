@@ -12,28 +12,29 @@ Vertex_list = [
            Vertex('4'),
            Vertex('5')
            ]
+# please change vertex_listhere, let me see how to adapt vertex_list here to apply for all situations.          
+initial_flow_value = 100000
 
 class Graphic(object):
         def __init__(self):
             self.graphdict= {}
-
+            self.vertex_list = []
+            self.total_value = 0 
         def AddEdge(self, first_vertex, second_vertex, edgecapacity):
-
-            self.graphdict[(first_vertex,second_vertex)] = edgecapacity
-
+            self.graphdict[(first_vertex,second_vertex)] = edgecapacit
+            
 
         def findmaxflow(self):
-            total_value = 0
             while self.findonepath():
                  flow_path = self.findonepath()
                  return_vertex = self.findonepath()
-                 flow_value = 1000
+                 flow_value = initial_flow_value
                  while (return_vertex.parent!=None):
                      flow_value = min(flow_value, self.graphdict[(return_vertex.parent.name,return_vertex.name)])
                      return_vertex = return_vertex.parent
                  self.updategraphdict(flow_path,flow_value)
-                 total_value = total_value + flow_value
-            print(total_value)
+                 self.total_value = self.total_value + flow_value
+            print(self.total_value)
 
 
         def updategraphdict(self,flow_path,flow_value):
@@ -44,10 +45,8 @@ class Graphic(object):
 
 
         def findonepath(self):
-             initial_vertex = '0'
-             end_vertex =  '5'
+             end_vertex =  Vertex_list[-1].name
              visited_edge ={}
-             flowpath = {}
              checking_list = [Vertex_list[0]]
              while (len(checking_list)!=0):
                  starting_vertex = checking_list.pop(0)
@@ -74,6 +73,7 @@ if __name__ == "__main__":
       g.AddEdge('4', '3', 7)
       g.AddEdge('4', '5', 4)
       g.findmaxflow()
-
+      vertex = Vertex('1')
+      
                 
             

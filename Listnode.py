@@ -117,7 +117,7 @@ def quick_sort(original_list,start_point, end_point):
         i  = partition(original_list, start_point, end_point)
         result1 = quick_sort(original_list, start_point, i )
         resutl2 = quick_sort(original_list, i +1, end_point)
-    # istead of while, we shall use if since only one loop is sufficient
+    # istead of while, we shall use if since only one loop is sufficient 
 def partition(original_list,start_point, end_point):
     i, p = start_point, start_point
     for j in range(p, end_point):

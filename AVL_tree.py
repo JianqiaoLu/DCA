@@ -33,6 +33,7 @@ class Binst(binnode):
             else:
                 insert_location.lchild = binst
                 binst.parent = insert_location
+
             insert_location.updateheightabove()
         
 
@@ -53,26 +54,39 @@ class Binst(binnode):
             current_node = current_node.lchild
 
     def remove(self, binnode_value):
+        # 这里remove完了以后没有做高度更新很显然是不对劲的。。
         result  =  self.search(binnode_value)
         if  result[0]:
             deleted_node = result[1]
-            if  not (deleted_node.rchild):
+            update_node = deleted_node.parent
+            if  not  (deleted_node.rchild):
                 self.change_parent(deleted_node, deleted_node.lchild)
-            elif not (deleted_node.lchild):
+            elif  not (deleted_node.lchild):
                 self.change_parent(deleted_node, deleted_node.rchild)
             else:
                 new_node = self.find_leftmostchild(deleted_node.rchild).value
                 deleted_node.value =new_node.value
                 self.change_parent(new_node,new_node.rchild)
-                
-            return 'finished'
+            if update_node:
+                update_node.updateheightabove()
+            if not self.avlbalanced():
+                self.three_plus_four([update_node,update_node.child(), update_node.child().child()],subtrees)
         else:
             new_node = self.find_leftmostchild(deleted_node.rchild)
-            
             return 'there exist no node to be deleted'
     #首先你要搞清楚为啥会失衡，因为插入和删除操作确实导致节点高度的变化从个人导致整个avl数不再满足左右高度最多只相差1，但是由于每次插入和删除操作都是基于叶子节点才来的，所以
     #如果是插入，插在none-type上面一旦发生了失衡也一定不是发生在父亲节点，而是祖父节点。。这就是为啥如果发生了失衡，一定会存在祖孙三代节点的原因。
     #然后3+4的算法实在解释说，如果我想让树结构是重新平衡一定会要找一个左右平衡的，同时还要满足中序遍历，所以就有了3+4 （祖孙三代提出来重新拍成父子结构，然后4棵子树为了满足中序遍历结果重新排序）
+
+    def avlbalanced(self):
+        current_node = self
+        if binnodebalanced(current_node):
+           answer  =   current_node.rchild.avlbalanced() and  current_node.lchild.avlbalanced()
+        else:
+           return False
+        return answer
+
+
     def three_plus_four(self,nodes, subtrees):
       for i in range(len(nodes) -1):
         for j in range(len(nodes) - i):
@@ -89,17 +103,31 @@ class Binst(binnode):
                 nodes[j] = midd     
       nodes[1].lchild = nodes[0]
       nodes[1].rchild = nodes[2]
-      nodes[0].rchild = subtrees[0]
-      nodes[0].lchild = subtrees[1]
-      nodes[1].rchild = subtrees[2]
-      nodes[1].rchild = subtrees[3]
+      for i in range(len(subtrees)):
+         if subtrees[i]:
+             continue
+         else:
+             if subtrees[i].value> nodes[1].value:
+                 if subtrees[i].value > nodes[2].value:
+                     nodes[2].value.rchild = subtrees[i]
+                     subtrees[i].parent = nodes[2]
+                 else:
+                     nodes[2].value.lchild = subtrees[i]
+                     subtrees[i].parent = nodes[2]    
+             else:
+                 if subtrees[i].value > nodes[0].value:
+                     nodes[0].value.rchild = subtrees[i]
+                     subtrees[i].parent = nodes[0]
+                 else:
+                     nodes[0].value.lchild = subtrees[i]
+                     subtrees[i].parent = nodes[0]   
+    #  注意其实subtree也要满足中序遍历的法则而且只有4个位置可以放置，这个问题想清楚了就很简单了
     
-def avlbalanced(binnode):
-    if -2 < status(binnode.lchild) - status(binnode.rchild) <2 :
-        return True
-    else:
-        return False
-
+def binnodebalanced(binnode):
+        if -2 < status(binnode.lchild) - status(binnode.rchild) <2 :
+            return True
+        else:
+            return False
 def status(binnode):
     if binnode:
         return binnode.height
@@ -109,7 +137,8 @@ if __name__ == "__main__":
     binnode = Binst(3) 
     binnode.middletraverse()
     print(binnode.insert(2))
+    print('insert',status(binnode))
     binnode.middletraverse()
     binnode.remove(2)
     binnode.middletraverse()
-    print(status(binnode))
+    print('remove',status(binnode))
