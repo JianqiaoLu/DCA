@@ -5,11 +5,13 @@ class Vertex(object):
         def __init__(self, vertexname):
             self.name =vertexname
             self.parent = None
+            self.height = 0
 
 class Graphic(object):
         def __init__(self):
-            self.edge_dict_residual= {}
+            self.edge_dict_augmentation= {}
             self.edge_dict_electrical = {}
+            self.edge_dict_preflow = {}
             self.Vertex_list = []
             self.edge_number = 0 
             self.vertex_number = 0
@@ -18,8 +20,9 @@ class Graphic(object):
             self.sigma = 0.1
             
         def AddEdge(self, first_vertex, second_vertex, edgecapacity):
-            self.edge_dict_residual[(first_vertex,second_vertex)] = edgecapacity
+            self.edge_dict_augmentation[(first_vertex,second_vertex)] = edgecapacity
             self.edge_dict_electrical[(first_vertex,second_vertex)]  = edgecapacity
+            self.edge_dict_preflow[(first_vertex,second_vertex)]  = edgecapacity
             self.edge_number =  self.edge_number  + 1
             if first_vertex not in self.Vertex_list:
                 self.Vertex_list.append(first_vertex)
@@ -150,7 +153,7 @@ class Graphic(object):
                  flow_value = 100000
 
                  while (return_vertex.parent!=None):
-                     flow_value = min(flow_value, self.edge_dict_residual[(return_vertex.parent,return_vertex)])
+                     flow_value = min(flow_value, self.edge_dict_augmentation[(return_vertex.parent,return_vertex)])
                      return_vertex = return_vertex.parent
                  self.update_edge_dict_residual(flow_path,flow_value)
                  self.total_value = self.total_value + flow_value
@@ -159,8 +162,8 @@ class Graphic(object):
 
         def update_edge_dict_residual(self,flow_path,flow_value):
             while(flow_path.parent != None ):
-                 self.edge_dict_residual[(flow_path.parent,flow_path)]  =  self.edge_dict_residual[(flow_path.parent,flow_path)] - flow_value
-                 self.edge_dict_residual[(flow_path, flow_path.parent)] =  flow_value
+                 self.edge_dict_augmentation[(flow_path.parent,flow_path)]  =  self.edge_dict_augmentation[(flow_path.parent,flow_path)] - flow_value
+                 self.edge_dict_augmentation[(flow_path, flow_path.parent)] =  flow_value
                  flow_path = flow_path.parent
 
 
@@ -172,14 +175,86 @@ class Graphic(object):
                  starting_vertex = checking_list.pop(0)
                  visited_edge[starting_vertex.name] = True
                  for vertex in self.Vertex_list:
-                     if (starting_vertex,vertex) in  self.edge_dict_residual and vertex.name not in visited_edge:
-                          if self.edge_dict_residual[(starting_vertex,vertex)] > 0:
+                     if (starting_vertex,vertex) in  self.edge_dict_augmentation and vertex.name not in visited_edge:
+                          if self.edge_dict_augmentation[(starting_vertex,vertex)] > 0:
                             checking_list.append(vertex)
                             visited_edge[vertex.name] =True
                             vertex.parent = starting_vertex
                             if vertex.name == end_vertex:
                               return self.Vertex_list[-1]
              return False
+
+        ####################### 我是分割线
+
+        def find_maxflow_preflowversion(self):
+
+            vertex_flow  = self.preflow_initial()
+
+            while self.get_vertex_withexcess(vertex_flow):
+                pushed_vertex  = self.get_vertex_withexcess(vertex_flow)
+                while vertex_flow[pushed_vertex]:
+                    if self.get_feasible_edge(pushed_vertex, vertex_flow):
+                        flow_edge = self.get_feasible_edge(pushed_vertex, vertex_flow)
+                        vertex_flow = self.push_flow(pushed_vertex, flow_edge,vertex_flow)
+                    else:
+                        self.relable(pushed_vertex)
+
+            return vertex_flow
+
+        def relable(self,pushed_vertex):
+            pushed_vertex.height  =  pushed_vertex.height + 1  
+
+        def get_vertex_withexcess(self, vertex_flow):
+            initial_height =  -1
+            choose_vertex = None
+            for (vertex,vertex_flow) in vertex_flow.items():
+              if vertex !=  self.Vertex_list[0] and vertex !=  self.Vertex_list[-1]  and vertex_flow:
+                  if initial_height < vertex.height:
+                      initial_height =  vertex.height
+                      choose_vertex = vertex
+            if not choose_vertex:
+                return False
+            else :
+               return choose_vertex
+
+        def get_feasible_edge(self, pushed_vertex, vertex_flow):
+            for vertex in self.Vertex_list:
+                if (pushed_vertex,vertex) in self.edge_dict_preflow and vertex.height == pushed_vertex.height -1:
+                    if self.edge_dict_preflow[(pushed_vertex,vertex)]:
+                       return (pushed_vertex,vertex)
+            return False
+
+        def push_flow(self, pushed_vertex, flow_edge, vertex_flow):
+            flow_value = min(vertex_flow[pushed_vertex], self.edge_dict_preflow[flow_edge])
+            vertex_flow[pushed_vertex] = vertex_flow[pushed_vertex] - flow_value
+            vertex_flow[flow_edge[1]]  = vertex_flow[flow_edge[1]]  + flow_value
+            self.update_preflow_residual(flow_value, flow_edge)
+            return vertex_flow
+
+        def update_preflow_residual(self,flow_value, flow_edge):
+            self.edge_dict_preflow[flow_edge] = self.edge_dict_preflow[flow_edge]  - flow_value
+            inverse_edge = (flow_edge[1],flow_edge[0])
+            if inverse_edge in  self.edge_dict_preflow.keys():
+               self.edge_dict_preflow[inverse_edge]  =  self.edge_dict_preflow[inverse_edge]+ flow_value
+            else:
+               self.edge_dict_preflow[inverse_edge]  = flow_value
+
+
+        def preflow_initial(self):
+            self.Vertex_list[0].height = self.vertex_number
+            vertex_flow = {}
+            for vertex in self.Vertex_list:
+                vertex_flow[vertex] = 0
+                if (self.Vertex_list[0],vertex) in self.edge_dict_preflow:
+                    self.edge_dict_preflow[(vertex, self.Vertex_list[0])] = self.edge_dict_preflow[(self.Vertex_list[0],vertex )]
+                    vertex_flow[vertex] = vertex_flow[vertex] + self.edge_dict_preflow[(self.Vertex_list[0],vertex )]
+                    vertex_flow[self.Vertex_list[0]] =  vertex_flow[self.Vertex_list[0]]  -  self.edge_dict_preflow[(self.Vertex_list[0],vertex )]
+                    self.edge_dict_preflow[(self.Vertex_list[0],vertex)] = 0 
+                    
+            return vertex_flow
+                    
+            
+
 
 
             
@@ -200,5 +275,6 @@ if __name__ == "__main__":
       g.AddEdge(vertex_3, vertex_5, 10)
       g.AddEdge(vertex_4, vertex_3, 7)
       g.AddEdge(vertex_4, vertex_5, 4)
-      print('approximate_solution:',g.find_maxflow_electricversion())
-      print('exact_solution:',g.find_maxflow_residualversion())
+      #print('approximate_solution:',g.find_maxflow_electricversion())
+      #print('exact_solution:',g.find_maxflow_residualversion())
+      #print('preflow_solution:', g.find_maxflow_preflowversion())
