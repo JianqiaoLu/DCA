@@ -1,2 +1,3 @@
-# assigments for convex programm
-we know that we need to 
+# assigments for convex optimization
+the difficult part for solving the hessain part has already written in the .pdf
+
